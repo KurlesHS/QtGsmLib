@@ -41,7 +41,9 @@ public:
     static QString toHex( const QByteArray& binary );
     static QByteArray fromHex( const QString& hex );
     static QString decodeNumber( const QString& value, uint type );
+    /*
     static QString decodeNumber( QAtResultParser& parser );
+    */
     static QString encodeNumber( const QString& value, bool keepPlus = false );
     static QString nextString( const QString& buf, uint& posn );
     static uint parseNumber( const QString& str, uint& posn );

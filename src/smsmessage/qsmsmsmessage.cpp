@@ -200,6 +200,8 @@ public:
     int mDataCodingScheme;
     int mMessageClass;
     int mProtocol;
+    int mMessagePartNum;
+    QList<int> mMessageIds;
 };
 
 /*!
@@ -1079,6 +1081,26 @@ void QSMSMessage::setDestinationPort(int value)
     }
     removeParts( "application/x-qtopia-wdp-ports" );
     addPart( QSMSMessagePart( "application/x-qtopia-wdp-ports", data ) );
+}
+
+void QSMSMessage::setMessageIds(const QList<int> messageIds)
+{
+    d->mMessageIds = messageIds;
+}
+
+QList<int> QSMSMessage::messageIds() const
+{
+    return d->mMessageIds;
+}
+
+void QSMSMessage::setMessagePartNumber(const int messagePartNumber)
+{
+    d->mMessagePartNum = messagePartNumber;
+}
+
+int QSMSMessage::messagePartNumber() const
+{
+    return d->mMessagePartNum;
 }
 
 /*!

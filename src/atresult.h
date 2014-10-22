@@ -1,32 +1,15 @@
-/****************************************************************************
-**
-** This file is part of the Qt Extended Opensource Package.
-**
-** Copyright (C) 2009 Trolltech ASA.
-**
-** Contact: Qt Extended Information (info@qtextended.org)
-**
-** This file may be used under the terms of the GNU General Public License
-** version 2.0 as published by the Free Software Foundation and appearing
-** in the file LICENSE.GPL included in the packaging of this file.
-**
-** Please review the following information to ensure GNU General Public
-** Licensing requirements will be met:
-**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
-**
-**
-****************************************************************************/
+#ifndef ATRESULT_H
+#define ATRESULT_H
 
-#ifndef QATRESULT_H
-#define QATRESULT_H
+#include <QObject>
+#include <QMetaType>
 
-#include <qobject.h>
-#include <qstring.h>
+class AtResult;
 
-class QAtResultPrivate;
 
-class QAtResult
+class AtResult : public QObject
 {
+    Q_OBJECT
 public:
     enum ResultCode
     {
@@ -133,40 +116,32 @@ public:
         UnknownError                = 500
     };
 
-    class UserData
-    {
-    public:
-        virtual ~UserData() {}
-    };
-
-    QAtResult();
-    QAtResult( const QAtResult& other );
-    ~QAtResult();
-
-    QAtResult& operator=( const QAtResult& other );
-
-    QString result() const;
-    void setResult( const QString& value );
+public:
+    explicit AtResult(QObject *parent = 0);
+    AtResult(const AtResult &atResult);
 
     QString content() const;
-    void setContent( const QString& value );
-    void append( const QString& value );
+    void setContent(const QString &content);
 
-    QAtResult::ResultCode resultCode() const;
-    void setResultCode( QAtResult::ResultCode value );
+    void appendToContent(const QString &line);
 
-    bool ok() const;
+    bool isValid() const;
+    void setValid(const bool isValid);
 
-    QString verboseResult() const;
+    ResultCode resultCode() const;
+    void setResultCode(const ResultCode &resultCode);
 
-    QAtResult::UserData *userData() const;
-    void setUserData( QAtResult::UserData *value );
+signals:
+
+public slots:
 
 private:
-    QAtResultPrivate *d;
+    QString m_content;
+    ResultCode m_resultCode;
+    bool m_isValid;
 
-    void resultToCode( const QString& value );
-    QString codeToResult( const QString& defaultValue ) const;
 };
 
-#endif
+//Q_DECLARE_METATYPE(AtResult)
+
+#endif // ATRESULT_H

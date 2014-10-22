@@ -120,6 +120,12 @@ public:
     int destinationPort() const;
     void setDestinationPort(int value);
 
+    void setMessageIds(const QList<int> messageIds);
+    QList<int> messageIds() const;
+
+    void setMessagePartNumber(const int messagePartNumber);
+    int messagePartNumber() const;
+
     int sourcePort() const;
     void setSourcePort(int value);
 

@@ -18,7 +18,7 @@
 ****************************************************************************/
 
 #include <qatutils.h>
-#include <qatresultparser.h>
+//#include <qatresultparser.h>
 #include <qgsmcodec.h>
 #include <qtextcodec.h>
 
@@ -142,13 +142,14 @@ QString QAtUtils::decodeNumber( const QString& value, uint type )
 
     \sa encodeNumber()
 */
+/*
 QString QAtUtils::decodeNumber( QAtResultParser& parser )
 {
     QString value = parser.readString();
     uint type = parser.readNumeric();
     return decodeNumber( value, type );
 }
-
+*/
 /*!
     Encode the phone number in \a value into a string plus a
     type of address octet.  International numbers that start
