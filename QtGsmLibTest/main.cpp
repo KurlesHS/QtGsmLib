@@ -1,8 +1,12 @@
 #include <QCoreApplication>
+
 #include <QTextCodec>
+#include <QTimer>
 #include <QDebug>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+
+#include "testinggms.h"
 #include "smsmessage/qsmsmessage.hpp"
 
 TEST(QtGsmLibTest, TestSmsMessage) {
@@ -37,11 +41,33 @@ TEST(QtGsmLibTest, TestSmsMessage) {
         uint t2 = (uint)t & 0x3ff;
         ASSERT_EQ (t2 , tmp &0x3ff);
 
+
+
     }
+    /*
+    QTimer timer;
+    QObject::connect(&timer, SIGNAL(timeout()), qApp, SLOT(quit()));
+    timer.start(2000);
+    qDebug() << qApp;
+    qApp->exec();
+    */
+}
+
+TEST_F(TestingGms, test1) {
+    QTimer timer;
+    QObject::connect(&timer, SIGNAL(timeout()), qApp, SLOT(quit()));
+
+    timer.start(2000);
+    QTimer::singleShot(1, this, SLOT(testSomething()));
+    qApp->exec();
+    qDebug() << inArray().length();
 }
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication a(argc, argv);
+    qDebug() << &a;
+
     QTextCodec *cyrillicCodec = QTextCodec::codecForName("UTF-8");
     QTextCodec::setCodecForTr(cyrillicCodec);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("Win-1251"));

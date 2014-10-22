@@ -18,6 +18,9 @@ include($$PWD/../src/qtgsmlib.pri)
 INCLUDEPATH += D:/Develop/LibsAndSdk/gmock-1.7.0/include
 INCLUDEPATH += D:/Develop/LibsAndSdk/gtest-1.7.0/include
 
+INCLUDEPATH += D:/Develop/Libs/gmock-1.7.0/include
+INCLUDEPATH += D:/Develop/Libs/gtest-1.7.0/include
+
 TARGET = QtGsmLibTest
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -25,4 +28,8 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    testinggms.cpp
+
+HEADERS += \
+    testinggms.h

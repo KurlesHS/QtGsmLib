@@ -35,21 +35,20 @@ void AtChat::init()
 void AtChat::read()
 {
     qDebug() << Q_FUNC_INFO;
-    m_timeoutTimer.stop();
     char ch;
     bool lineIsProcessed = true;
     while (m_readDevice->getChar(&ch)) {
-        lineIsProcessed = false;
         if (ch == 0x0d) {
             continue;
         }
-        if (ch != 0x0a && ch != 0x0d) {
+        m_timeoutTimer.stop();
+        lineIsProcessed = false;
+        if (ch != 0x0a) {
             m_currentLine.append(QChar(ch));
 
             if (m_readDevice->bytesAvailable() == 0 && m_currentLine == QString("> ")) {
                 // this is the place to send pdu or something else
                 if (m_currentCommand){
-                    m_timeoutTimer.stop();
                     if (!m_currentCommand->processLine(m_currentLine, this)) {
                         m_currentLine.clear();
                         lineIsProcessed = true;
@@ -60,7 +59,7 @@ void AtChat::read()
                 m_currentLine.clear();
             }
         } else {
-            lineIsProcessed = true;
+
             if (m_currentCommand && m_currentLine.trimmed() == m_currentCommand->atCommand().trimmed()) {
                 // handle echo
                 m_currentLine.clear();
@@ -69,10 +68,10 @@ void AtChat::read()
             if (m_currentLine.trimmed().isEmpty()) {
                 continue;
             }
-            m_timeoutTimer.stop();
             processLine(m_currentLine);
             if (m_currentCommand) {
                 if (!m_currentCommand->processLine(m_currentLine, this)) {
+                    lineIsProcessed = true;
                     m_currentLine.clear();
                     QTimer::singleShot(0, m_currentCommand, SLOT(setIsProcessed()));
                     m_currentCommand = 0;
@@ -82,7 +81,7 @@ void AtChat::read()
             m_currentLine.clear();
         }
     }
-    if (!lineIsProcessed && !m_currentLine.isEmpty()) {
+    if (!lineIsProcessed || !m_currentLine.isEmpty()) {
         m_timeoutTimer.start(200);
     }
 }
@@ -145,7 +144,7 @@ void AtChat::onTimeout()
         m_currentCommand->setItFailOnTimeoutReason();
         m_currentCommand = 0;
     }
-    logMsg("Tileout while waiting dage");
+    logMsg("Timeout while waiting data");
     nextCommand();
 }
 
