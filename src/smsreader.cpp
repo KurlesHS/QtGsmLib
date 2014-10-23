@@ -91,6 +91,7 @@ void SmsReader::check()
         return;
     }
     SimpleAtCommand *cmd = new SimpleAtCommand("AT+CMGL=4");
+    cmd->setWaitDataTimeout(2000);
     connect(cmd, SIGNAL(isProcessed()), this, SLOT(onRequestSmsCommand()));
     m_atChat->addCommand(cmd);
 }
@@ -138,7 +139,6 @@ void SmsReader::onCpmsCommand()
     connect(cmd, SIGNAL(isProcessed()), this, SLOT(onSetDefaultStorageCommand()));
     m_atChat->addCommand(cmd);
 
-    check();
 }
 
 void SmsReader::onSetDefaultStorageCommand()
@@ -152,6 +152,7 @@ void SmsReader::onSetDefaultStorageCommand()
         cmd->deleteLater();
     }
     this->logMsg(logMsg);
+    check();
 }
 
 void SmsReader::onRequestSmsCommand()
@@ -177,7 +178,7 @@ void SmsReader::onRequestSmsCommand()
                     }
                 } else {
                     // expected pdu
-                    QSMSMessage smsMsg = QSMSMessage::fromPdu(QByteArray::fromHex(line.toAscii()));
+                    QSMSMessage smsMsg = QSMSMessage::fromPdu(QByteArray::fromHex(line.toLatin1()));
                     if (!smsMsg.sender().isEmpty()) {
                         QString multiId;
                         uint part;
@@ -228,7 +229,7 @@ void SmsReader::onRequestSmsCommand()
                 emit incomingSms();
             }
         } else {
-            logMsg(QString("Request sms command fail").arg(m_incomingMessages.count()));
+            logMsg(QString("Request sms command fail"));
         }
     }    
 }
@@ -253,7 +254,6 @@ void SmsReader::onNotification(const QString &notification, const QString &conte
 {
     Q_UNUSED(content)
     if (notification == QString("+CMTI:")) {
-        logMsg("check()");
         check();
     }
 }

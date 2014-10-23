@@ -6,21 +6,33 @@ AtCommand::AtCommand(const QString atCommand, QObject *parent) :
     m_atCommand(atCommand),
     m_errorResponce("ERROR"),
     m_okResponce("OK"),
+    m_waitDataTimeout(200),
     m_isValid(true)
 {
 
 }
 
-void AtCommand::onFailOnTimeoutReason()
+void AtCommand::onFailOnTimeoutReason(AtChat * const chat)
 {
+    Q_UNUSED(chat)
     m_isValid = false;
     emit isProcessed();
 }
 
-void AtCommand::setItFailOnTimeoutReason()
+void AtCommand::setItFailOnTimeoutReason(AtChat * const chat)
 {
-    onFailOnTimeoutReason();
+    onFailOnTimeoutReason(chat);
 }
+int AtCommand::waitDataTimeout() const
+{
+    return m_waitDataTimeout;
+}
+
+void AtCommand::setWaitDataTimeout(int waitDataTimeout)
+{
+    m_waitDataTimeout = waitDataTimeout;
+}
+
 QString AtCommand::okResponce() const
 {
     return m_okResponce;

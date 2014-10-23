@@ -22,8 +22,7 @@ public:
     virtual bool processLine(QString line, AtChat * const chat) = 0;
     virtual AtResult getCommandResult() = 0;
 
-    virtual QString secondAtCommand() const {return QString();}
-    virtual void onFailOnTimeoutReason();
+    virtual void onFailOnTimeoutReason(AtChat * const chat);
 
     QString errorResponce() const;
     void setErrorResponce(const QString &errorResponce);
@@ -33,9 +32,14 @@ public:
 
     bool isValid() const {return m_isValid;}
 
+    int waitDataTimeout() const;
+    void setWaitDataTimeout(int waitDataTimeout);
+
+    void informAboutStartSendingCommand() {emit startSendingOnModem();}
+
 public slots:
     void setIsProcessed() {emit isProcessed();}
-    void setItFailOnTimeoutReason();
+    void setItFailOnTimeoutReason(AtChat * const chat);
 
 protected:
     AtResult &atResult() {return m_result;}
@@ -43,6 +47,7 @@ protected:
     void setValid(const bool isValid) {m_isValid = isValid;}
 
 signals:
+    void startSendingOnModem();
     void isProcessed();
 
 public slots:
@@ -51,6 +56,7 @@ private:
     QString m_atCommand;
     QString m_errorResponce;
     QString m_okResponce;
+    int m_waitDataTimeout;
     bool m_isValid;
     AtResult m_result;
 };

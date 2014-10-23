@@ -7,6 +7,10 @@
 #include "simpleatcommand.h"
 #include "atchat.h"
 #include "smsreader.h"
+#include "smssender.h"
+#include "gsmmodem.h"
+
+#include <QTimer>
 
 class TestClass : public QObject
 {
@@ -15,13 +19,16 @@ public:
     TestClass(QIODevice *device) :
         QObject(),
         chat(device, device),
-        smsReader(&chat)
+        modem(&chat),
+        smsReader(&chat),
+        smsSender(&chat)
     {
         connect(&smsReader, SIGNAL(incomingSms()),
                 this, SLOT(onIncomingSms()));
     }
 
 public slots:
+
     void isProcessed() {
         AtCommand *cmd = qobject_cast<AtCommand*>(sender());
         if (cmd) {
@@ -29,6 +36,8 @@ public slots:
             AtResult res = cmd->getCommandResult();
             qDebug() << ++count << Q_FUNC_INFO << res.resultCode() <<  res.content();
             cmd->deleteLater();
+            QTimer::singleShot(2000, this, SLOT(isProcessed()));
+            return;
         }
         cmd = getCommand();
         chat.addCommand(cmd);
@@ -40,9 +49,9 @@ public slots:
             QSMSMessage sms = smsReader.getSmsMessage(i);
             qDebug() << sms.sender() << sms.text();
         }
-        while (smsReader.count() > 0) {
+        //while (smsReader.count() > 0) {
             //smsReader.deleteSms(0);
-        }
+        //}
     }
 
     SimpleAtCommand *getCommand() {
@@ -53,11 +62,19 @@ public slots:
     }
     void run() {
         isProcessed();
+        QTimer::singleShot(5000, this, SLOT(onStartSendSms()));
+    }
+
+    void onStartSendSms() {
+        qDebug() << Q_FUNC_INFO;
+        //smsSender.sendSms("213123", "+79646710340", "По идее это должена быть длинная смс, которая не помещается в одной как минимум");
     }
 
 private:
     AtChat chat;
+    GsmModem modem;
     SmsReader smsReader;
+    SmsSender smsSender;
 };
 
 #endif // MAIN_H

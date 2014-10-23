@@ -18,6 +18,7 @@ public:
 
     void deleteSms(const int number);
     QSMSMessage getSmsMessage(int number);
+    void init();
 
     int count();
 
