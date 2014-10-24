@@ -2,6 +2,7 @@
 #define ATCHAT_H
 
 #include "atcommand.h"
+#include "imodemtransport.h"
 
 #include <QObject>
 #include <QIODevice>
@@ -12,7 +13,7 @@ class AtChat : public QObject
 {
     Q_OBJECT
 public:
-    explicit AtChat(QIODevice *readDevice, QIODevice *writeDevice = 0, QObject *parent = 0);
+    explicit AtChat(IModemTransport *modemTransport, QObject *parent = 0);
     void addCommand(AtCommand * const command);
     void writeRawData(const QByteArray &data);
     void startWaitDataTimeout(const int ms);
@@ -42,8 +43,7 @@ private slots:
     void processCurrentCommand();
 
 private:
-    QIODevice *m_readDevice;
-    QIODevice *m_writeDevice;
+    IModemTransport *m_modemTransport;
     QString m_currentLine;
     QString m_expectedPduNotification;
     QList<AtCommand*> m_listOfCommand;

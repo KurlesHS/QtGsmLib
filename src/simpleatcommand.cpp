@@ -3,7 +3,8 @@
 
 SimpleAtCommand::SimpleAtCommand(const QString &atCommand,
                                  QObject *parent) :
-    AtCommand(atCommand, parent)
+    AtCommand(atCommand, parent),
+    m_afterSendCommandWaitResponseTimeout(1000)
 {
     addErrorResponce("ERROR");
     addOkErrorResponce("OK");
@@ -44,7 +45,7 @@ AtResult SimpleAtCommand::getCommandResult()
 
 void SimpleAtCommand::afterSendCommand(AtChat * const chat)
 {
-    chat->startWaitDataTimeout(1000);
+    chat->startWaitDataTimeout(m_afterSendCommandWaitResponseTimeout);
 }
 QVariant SimpleAtCommand::customData() const
 {
@@ -65,4 +66,14 @@ void SimpleAtCommand::addOkErrorResponce(const QString &ok)
 {
     m_okResponces.append(ok);
 }
+int SimpleAtCommand::afterSendCommandWaitResponseTimeout() const
+{
+    return m_afterSendCommandWaitResponseTimeout;
+}
+
+void SimpleAtCommand::setAfterSendCommandWaitResponseTimeout(int ms)
+{
+    m_afterSendCommandWaitResponseTimeout = ms;
+}
+
 

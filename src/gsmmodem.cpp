@@ -6,9 +6,15 @@ GsmModem::GsmModem(AtChat * const chat, const QString &balanceUssdCommand, QObje
     QObject(parent),
     m_atChat(chat),
     m_balanceCash(0.),
-    m_balanceUssdCommand(balanceUssdCommand)
+    m_balanceUssdCommand(balanceUssdCommand),
+    m_pingOkCount(0),
+    m_pingErrorCount(0)
 {
     init();
+    QTimer *t = new QTimer(this);
+    connect(t, SIGNAL(timeout()), this, SLOT(sendPingCommand()));
+    // пингуем модем каждые 30 секунд.
+    t->start(30000);
 }
 
 void GsmModem::onCommandHelper(AtCommand * const cmd, const QString &log)
@@ -29,6 +35,28 @@ void GsmModem::onInitCommand()
     if (cmd) {
         QString logStr = QString("init modem command '%0': %1").arg(cmd->atCommand().trimmed());
         onCommandHelper(cmd, logStr);
+    }
+}
+
+void GsmModem::onPingCommand()
+{
+    AtCommand *cmd = qobject_cast<AtCommand*>(sender());
+    if (cmd) {
+        bool ok = cmd->getCommandResult().resultCode() == AtResult::OK;
+        if (ok) {
+            // all is ok
+            ++m_pingOkCount;
+            if ((m_pingOkCount % 10) == 0) {
+                logMsg(QString("successful ping count: %0").arg(m_pingOkCount));
+            }
+        } else {
+            // something wrong
+            ++m_pingErrorCount;
+            if ((m_pingErrorCount % 10) == 0) {
+                logMsg(QString("ping errors count: %0").arg(m_pingErrorCount));
+            }
+        }
+        cmd->deleteLater();
     }
 }
 
@@ -100,7 +128,7 @@ void GsmModem::init()
 
 void GsmModem::logMsg(const QString msg)
 {
-    qDebug(QString("GsmModem: %0").arg(msg).toUtf8().data());
+    qDebug(QString("[GsmModem] %0").arg(msg).toUtf8().data());
 }
 
 void GsmModem::requestBalance()
@@ -108,6 +136,15 @@ void GsmModem::requestBalance()
     if (!m_balanceUssdCommand.isEmpty()) {
         SimpleAtCommand *cmd = new SimpleAtCommand(QString("AT+CUSD=1,%0,15").arg(m_balanceUssdCommand));
         connect(cmd, SIGNAL(isProcessed()), this, SLOT(onRequestBalanceCommand()));
+        m_atChat->addCommand(cmd);
+    }
+}
+
+void GsmModem::sendPingCommand()
+{
+    if (m_atChat->isOpen()) {
+        SimpleAtCommand *cmd = new SimpleAtCommand(QString("AT"));
+        connect(cmd, SIGNAL(isProcessed()), this, SLOT(onPingCommand()));
         m_atChat->addCommand(cmd);
     }
 }

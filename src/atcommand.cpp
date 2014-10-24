@@ -4,8 +4,6 @@
 AtCommand::AtCommand(const QString atCommand, QObject *parent) :
     QObject(parent),
     m_atCommand(atCommand),
-    m_errorResponce("ERROR"),
-    m_okResponce("OK"),
     m_waitDataTimeout(200),
     m_isValid(true)
 {
@@ -31,26 +29,6 @@ int AtCommand::waitDataTimeout() const
 void AtCommand::setWaitDataTimeout(int waitDataTimeout)
 {
     m_waitDataTimeout = waitDataTimeout;
-}
-
-QString AtCommand::okResponce() const
-{
-    return m_okResponce;
-}
-
-void AtCommand::setOkResponce(const QString &okResponce)
-{
-    m_okResponce = okResponce;
-}
-
-QString AtCommand::errorResponce() const
-{
-    return m_errorResponce;
-}
-
-void AtCommand::setErrorResponce(const QString &errorResponce)
-{
-    m_errorResponce = errorResponce;
 }
 
 

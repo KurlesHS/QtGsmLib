@@ -24,12 +24,6 @@ public:
 
     virtual void onFailOnTimeoutReason(AtChat * const chat);
 
-    QString errorResponce() const;
-    void setErrorResponce(const QString &errorResponce);
-
-    QString okResponce() const;
-    void setOkResponce(const QString &okResponce);
-
     bool isValid() const {return m_isValid;}
 
     int waitDataTimeout() const;
@@ -54,8 +48,6 @@ public slots:
 
 private:
     QString m_atCommand;
-    QString m_errorResponce;
-    QString m_okResponce;
     int m_waitDataTimeout;
     bool m_isValid;
     AtResult m_result;

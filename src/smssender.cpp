@@ -107,7 +107,7 @@ void SmsSender::onPduNotification(const QString &notification,
 
 void SmsSender::logMsg(const QString msg)
 {
-    qDebug(QString("SmsSender: %0").arg(msg).toUtf8().data());
+    qDebug(QString("[SmsSender] %0").arg(msg).toUtf8().data());
 }
 
 void SmsSender::addDeliveryReportRequestToPdu(QByteArray &pdu)

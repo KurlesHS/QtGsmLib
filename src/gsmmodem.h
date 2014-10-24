@@ -27,9 +27,11 @@ signals:
 
 public slots:
     void requestBalance();
+    void sendPingCommand();
 
 private slots:
     void onInitCommand();
+    void onPingCommand();
     void onRequestBalanceCommand();
     void onNotification(const QString &notification, const QString &content);
 
@@ -37,6 +39,8 @@ private:
     AtChat *m_atChat;
     double m_balanceCash;
     QString m_balanceUssdCommand;
+    quint64 m_pingOkCount;
+    quint64 m_pingErrorCount;
 
 };
 

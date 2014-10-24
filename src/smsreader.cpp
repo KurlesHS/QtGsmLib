@@ -107,7 +107,7 @@ void SmsReader::getStorage()
 
 void SmsReader::logMsg(const QString msg)
 {
-    qDebug(QString("SmsReader: %0").arg(msg).toUtf8().data());
+    qDebug(QString("[SmsReader] %0").arg(msg).toUtf8().data());
 }
 
 void SmsReader::onCpmsCommand()

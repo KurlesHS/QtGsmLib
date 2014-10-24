@@ -28,7 +28,9 @@ HEADERS += \
     $$PWD/smssender.h \
     $$PWD/sendsmsatcommand.h \
     $$PWD/gsmmodem.h \
-    $$PWD/modemcaller.h
+    $$PWD/modemcaller.h \
+    $$PWD/serialmodemtransport.h \
+    $$PWD/imodemtransport.h
 
 SOURCES += \
     $$PWD/smsmessage/qatutils.cpp \
@@ -43,4 +45,5 @@ SOURCES += \
     $$PWD/smssender.cpp \
     $$PWD/sendsmsatcommand.cpp \
     $$PWD/gsmmodem.cpp \
-    $$PWD/modemcaller.cpp
+    $$PWD/modemcaller.cpp \
+    $$PWD/serialmodemtransport.cpp

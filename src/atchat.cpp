@@ -3,10 +3,9 @@
 #include <QTimer>
 #include <QUuid>
 
-AtChat::AtChat(QIODevice *readDevice, QIODevice *writeDevice, QObject *parent) :
+AtChat::AtChat(IModemTransport *modemTransport, QObject *parent) :
     QObject(parent),
-    m_readDevice(readDevice),
-    m_writeDevice(writeDevice ? writeDevice : readDevice),
+    m_modemTransport(modemTransport),
     m_currentCommand(0),
     m_isBusy(false)
 {
@@ -27,7 +26,7 @@ void AtChat::addCommand(AtCommand * const command)
 
 void AtChat::init()
 {
-    connect(m_readDevice, SIGNAL(readyRead()),
+    connect(m_modemTransport, SIGNAL(readyRead()),
             this, SLOT(onReadyRead()));
     connect(&m_timeoutTimer, SIGNAL(timeout()),
             this, SLOT(onTimeout()));
@@ -40,7 +39,7 @@ void AtChat::read()
 {
     char ch;
     bool lineIsProcessed = true;
-    while (m_readDevice->getChar(&ch)) {
+    while (m_modemTransport->getChar(&ch)) {
         //qDebug() << Q_FUNC_INFO << QUuid::createUuid().toString();
         if (ch == 0x0d) {
             continue;
@@ -50,7 +49,7 @@ void AtChat::read()
         if (ch != 0x0a) {
             m_currentLine.append(QChar(ch));
 
-            if (m_readDevice->bytesAvailable() == 0 && m_currentLine == QString("> ")) {
+            if (m_modemTransport->bytesAvailable() == 0 && m_currentLine == QString("> ")) {
                 // this is the place to send pdu or something else
                 if (m_currentCommand) {
                     lineIsProcessed = true;
@@ -94,7 +93,7 @@ void AtChat::read()
 
 bool AtChat::processLine(QString line)
 {
-    qDebug() << Q_FUNC_INFO << line;
+    //qDebug() << Q_FUNC_INFO << line;
     if (!m_expectedPduNotification.isEmpty()) {
         emit pduNotification(m_expectedPduNotification, line);
         m_expectedPduNotification.clear();
@@ -120,8 +119,8 @@ bool AtChat::processLine(QString line)
 
 void AtChat::writeRawData(const QByteArray &data)
 {
-    qDebug() << Q_FUNC_INFO << QString::fromLocal8Bit(data).trimmed();
-    m_writeDevice->write(data);
+    //qDebug() << Q_FUNC_INFO << QString::fromLocal8Bit(data).trimmed();
+    m_modemTransport->write(data);
 }
 
 void AtChat::startWaitDataTimeout(const int ms)
@@ -138,7 +137,7 @@ void AtChat::stopWaitDataTimer()
 
 bool AtChat::isOpen() const
 {
-    return m_readDevice && m_readDevice->isOpen();
+    return m_modemTransport->isOpen();
 }
 
 void AtChat::registerNotification(const QString &notification)

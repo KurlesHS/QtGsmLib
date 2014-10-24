@@ -9,6 +9,7 @@
 #include "smsreader.h"
 #include "smssender.h"
 #include "gsmmodem.h"
+#include "modemcaller.h"
 
 #include <QTimer>
 
@@ -16,12 +17,13 @@ class TestClass : public QObject
 {
     Q_OBJECT
 public:
-    TestClass(QIODevice *device) :
+    TestClass(IModemTransport *device) :
         QObject(),
-        chat(device, device),
+        chat(device),
         modem(&chat),
         smsReader(&chat),
-        smsSender(&chat)
+        smsSender(&chat),
+        modemCaller(&chat)
     {
         connect(&smsReader, SIGNAL(incomingSms()),
                 this, SLOT(onIncomingSms()));
@@ -34,7 +36,7 @@ public slots:
         if (cmd) {
             static int count= 0;
             AtResult res = cmd->getCommandResult();
-            qDebug() << ++count << Q_FUNC_INFO << res.resultCode() <<  res.content();
+            //qDebug() << ++count << Q_FUNC_INFO << res.resultCode() <<  res.content();
             cmd->deleteLater();
             QTimer::singleShot(2000, this, SLOT(isProcessed()));
             return;
@@ -67,6 +69,7 @@ public slots:
 
     void onStartSendSms() {
         qDebug() << Q_FUNC_INFO;
+        modemCaller.call("+79646710340");
         //smsSender.sendSms("213123", "+79646710340", "По идее это должена быть длинная смс, которая не помещается в одной как минимум");
     }
 
@@ -75,6 +78,7 @@ private:
     GsmModem modem;
     SmsReader smsReader;
     SmsSender smsSender;
+    ModemCaller modemCaller;
 };
 
 #endif // MAIN_H

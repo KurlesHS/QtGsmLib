@@ -2,8 +2,9 @@
 #include <QTextCodec>
 #include <QDebug>
 #include <atchat.h>
-#include <QSerialPort>
-#include <simpleatcommand.h>
+
+#include "simpleatcommand.h"
+#include "serialmodemtransport.h"
 #include "main.h"
 
 #include "smsmessage/qsmsmessage.hpp"
@@ -31,18 +32,12 @@ int main(int argc, char *argv[])
     qDebug() << msg2.messageType();
     qDebug() << msg2.timestamp();
 
-    QSerialPort serialPort;
-    serialPort.setBaudRate(QSerialPort::Baud115200);
-    serialPort.setDataBits(QSerialPort::Data8);
-    serialPort.setStopBits(QSerialPort::OneStop);
-    serialPort.setParity(QSerialPort::NoParity);
-    serialPort.setFlowControl(QSerialPort::NoFlowControl);
-    serialPort.setPortName("COM3");
-    if (!serialPort.open(QIODevice::ReadWrite)) {
+    SerialModemTransport modemTransport("COM3");
+    if (!modemTransport.open()) {
         return -1;
     }
     qDebug() << "port is open";
-    TestClass t(&serialPort);
+    TestClass t(&modemTransport);
     t.run();
 
     return a.exec();

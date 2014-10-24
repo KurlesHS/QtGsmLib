@@ -21,15 +21,15 @@ public:
     void addErrorResponce(const QString &error);
     void addOkErrorResponce(const QString &ok);
 
-signals:
-
-public slots:
+    int afterSendCommandWaitResponseTimeout() const;
+    void setAfterSendCommandWaitResponseTimeout(int ms);
 
 private:
     QString m_content;
     QVariant m_customData;
     QStringList m_okResponces;
     QStringList m_errorResponces;
+    int m_afterSendCommandWaitResponseTimeout;
 };
 
 #endif // SIMPLEATCOMMAND_H
